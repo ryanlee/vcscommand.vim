@@ -1221,6 +1221,13 @@ function! VCSCommandDoCommand(cmd, cmdName, statusText, options)
 		throw 'Original buffer no longer exists, aborting.'
 	endif
 
+	if has_key(a:options, 'AsyncRun')
+		let path = bufname(originalBuffer)
+		let fullCmd = a:cmd . ' -- ' . shellescape(path)
+		exec ":AsyncRun " . fullCmd
+		return bufnr('%')
+	endif
+
 	let path = resolve(bufname(originalBuffer))
 
 	" Work with netrw or other systems where a directory listing is displayed in
@@ -1235,7 +1242,8 @@ function! VCSCommandDoCommand(cmd, cmdName, statusText, options)
 	if match(a:cmd, '<VCSCOMMANDFILE>') > 0
 		let fullCmd = substitute(a:cmd, '<VCSCOMMANDFILE>', fileName, 'g')
 	else
-		let fullCmd = a:cmd . ' -- ' . shellescape(fileName)
+		" let fullCmd = a:cmd . ' -- ' . shellescape(fileName)
+		let fullCmd = a:cmd . ' -- ' . shellescape(path)
 	endif
 
 	" Change to the directory of the current buffer.  This is done for CVS, but
