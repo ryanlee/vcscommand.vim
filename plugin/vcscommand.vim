@@ -1224,7 +1224,7 @@ function! VCSCommandDoCommand(cmd, cmdName, statusText, options)
 	if has_key(a:options, 'AsyncRun')
 		let path = bufname(originalBuffer)
 		let fullCmd = a:cmd . ' -- ' . shellescape(path)
-		exec ":AsyncRun " . fullCmd
+		exec ":AsyncRun -raw=1 " . fullCmd
 		return bufnr('%')
 	endif
 
@@ -1242,8 +1242,7 @@ function! VCSCommandDoCommand(cmd, cmdName, statusText, options)
 	if match(a:cmd, '<VCSCOMMANDFILE>') > 0
 		let fullCmd = substitute(a:cmd, '<VCSCOMMANDFILE>', fileName, 'g')
 	else
-		" let fullCmd = a:cmd . ' -- ' . shellescape(fileName)
-		let fullCmd = a:cmd . ' -- ' . shellescape(path)
+		let fullCmd = a:cmd . ' -- ' . shellescape(fileName)
 	endif
 
 	" Change to the directory of the current buffer.  This is done for CVS, but
